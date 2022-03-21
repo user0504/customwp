@@ -1,0 +1,13 @@
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: cg-storageclass
+provisioner: nfs-service
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+allowVolumeExpansion: false
+parameters:
+  storageaccounttype: Standard_LRS
+  kind: Managed
+mountOptions:
+  - debug

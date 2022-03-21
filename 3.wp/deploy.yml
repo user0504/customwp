@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  replicas: 1
+  # replicas: 10000
+  selector:
+    matchLabels:
+      role: wordpress
+  template:
+    metadata:
+      labels:
+        role: wordpress
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: wordpress
+          image: totapple01/customwordpress
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+          volumeMounts:
+            # name must match the volume name below
+            - name: wordpressfiles
+              mountPath: "/wordpressfiles/"
+      volumes:
+        - name: wordpressfiles
+          persistentVolumeClaim:
+            claimName: wordpressfiles
